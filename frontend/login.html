@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI UX Auditor - Authentication Portal</title>
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+    <style>
+        /* Splash Screen Overlay Style Wrapper */
+        #splash-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.6s;
+        }
+
+        .splash-glow-ring {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            border-top-color: var(--accent-color);
+            border-bottom-color: var(--info);
+            animation: spinFast 1.2s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .splash-glow-ring::after {
+            content: '';
+            position: absolute;
+            top: 10px; left: 10px; right: 10px; bottom: 10px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-left-color: var(--warning);
+            animation: spinFast 2s linear infinite reverse;
+        }
+
+        .splash-title {
+            font-size: 2.25rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff 0%, var(--text-muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Core Login Grid Architecture Layout */
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--bg-primary);
+            padding: 2rem;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 440px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            box-shadow: var(--shadow-xl);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 60%);
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        @keyframes spinFast {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="splash-overlay">
+        <div class="splash-glow-ring"></div>
+        <div class="splash-title">✨ AI UX Auditor</div>
+        <div style="color: var(--accent-color); font-size: 0.85rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;">
+            Instantiating Multi-Agent Grid Framework
+        </div>
+    </div>
+
+    <div class="auth-container">
+        <div class="login-card">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h2 style="font-size: 1.75rem; color: var(--text-primary); margin-bottom: 0.25rem;">Welcome Operator</h2>
+                <p style="color: var(--text-secondary); font-size: 0.95rem;">Provide orchestrator security credentials</p>
+            </div>
+
+            <form id="loginForm" onsubmit="handleDemoAuthentication(event)">
+                <div class="form-group">
+                    <label>Operator Node Email</label>
+                    <input type="email" id="authEmail" class="input-field" placeholder="admin@ux-auditor.ai" value="admin@ux-auditor.ai" required>
+                </div>
+                <div class="form-group">
+                    <label>Access Control Token Key</label>
+                    <input type="password" id="authToken" class="input-field" placeholder="••••••••••••" value="password123" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; margin-top: 1rem; font-weight: 700;">
+                    Authenticate Core Node →
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Automatic Splash Timer Sequence Control Lifecycle
+        document.addEventListener("DOMContentLoaded", () => {
+            setTimeout(() => {
+                const splash = document.getElementById("splash-overlay");
+                if (splash) {
+                    splash.style.opacity = "0";
+                    splash.style.visibility = "hidden";
+                }
+            }, 2200); // Exposes clean branding for 2.2 seconds before dissolving
+        });
+
+        // Fast client authentication mock layer matching user data schemas
+        function handleDemoAuthentication(event) {
+            event.preventDefault();
+            // Instantly transition local path pointer into entry point setup
+            window.location.href = "index.html";
+        }
+    </script>
+</body>
+</html>
