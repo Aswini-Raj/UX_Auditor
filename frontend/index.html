@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI UX Auditor - Initialization</title>
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .hero-section { text-align: center; margin-bottom: 3rem; }
+        .hero-section h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; }
+        .hero-section p { color: var(--text-secondary); font-size: 1.1rem; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-secondary); }
+        .form-control { width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 1rem; transition: var(--transition); }
+        .form-control:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 3px var(--accent-glow); }
+        .grid-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-top: 0.5rem; }
+        .option-card { border: 2px solid var(--border-color); padding: 1.25rem; border-radius: var(--radius-md); cursor: pointer; transition: var(--transition); position: relative; }
+        .option-card:hover { border-color: var(--accent-color); background: var(--bg-primary); }
+        .option-card input[type="radio"] { position: absolute; top: 1.25rem; right: 1.25rem; }
+        .option-card.selected { border-color: var(--accent-color); background-color: var(--accent-glow); }
+        .option-card h4 { font-size: 1.05rem; margin-bottom: 0.25rem; }
+        .option-card p { font-size: 0.85rem; color: var(--text-secondary); }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo-container">✨ AI UX Auditor</div>
+        <div class="nav-links">
+            <a href="index.html" class="active">Initialization</a>
+            <a href="dashboard.html">Live Workspace</a>
+            <a href="findings.html">UX Intelligence</a>
+            <a href="fixes.html">AI Code Fixes</a>
+            <a href="retest.html">Auto Re-Test</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="hero-section">
+            <h1>Smarter Audits. Better Experiences.</h1>
+            <p>Deploy a coordinated swarm of specialized AI agents to inspect your digital flows.</p>
+        </div>
+
+        <div class="card">
+            <form id="auditForm">
+                <div class="form-group">
+                    <label for="targetUrl">Target Website URL</label>
+                    <input type="url" id="targetUrl" class="form-control" placeholder="https://quantumdynamics.io" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Select Audit Target Flow Goal</label>
+                    <div class="grid-options">
+                        <label class="option-card selected">
+                            <input type="radio" name="goal" value="signup" checked>
+                            <h4>Sign-Up Process</h4>
+                            <p>Analyzes conversion hurdles, text input validity, and speed bumps during user creation.</p>
+                        </label>
+                        <label class="option-card">
+                            <input type="radio" name="goal" value="login">
+                            <h4>Login Interface</h4>
+                            <p>Validates account entrypoints, dynamic feedback loops, and path routing errors.</p>
+                        </label>
+                        <label class="option-card">
+                            <input type="radio" name="goal" value="checkout">
+                            <h4>E-Commerce Checkout</h4>
+                            <p>Deep-dive analysis on layout friction, critical path payment steps, and fields.</p>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1rem; margin-top: 1rem;">
+                    🚀 Initialize Orchestrator Agent
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.option-card input').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+                if(e.target.checked) e.target.closest('.option-card').classList.add('selected');
+            });
+        });
+
+        document.getElementById('auditForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const payload = {
+                url: document.getElementById('targetUrl').value,
+                goal: document.querySelector('input[name="goal"]:checked').value
+            };
+            
+            localStorage.setItem('currentAuditUrl', payload.url);
+            localStorage.setItem('currentAuditGoal', payload.goal);
+
+            const res = await fetch('http://127.0.0.1:8000/api/audit/start', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            window.location.href = `dashboard.html?task_id=${data.task_id}`;
+        });
+    </script>
+    <script src="js/api.js"></script>
+    <script src="js/audit.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

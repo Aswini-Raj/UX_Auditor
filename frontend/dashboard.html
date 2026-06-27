@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI UX Auditor - Active Agent System</title>
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; }
+        .agent-container { display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem; }
+        .agent-row { display: flex; align-items: center; justify-content: space-between; padding: 1rem; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: var(--radius-sm); }
+        .agent-info { display: flex; align-items: center; gap: 1rem; }
+        .agent-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--text-muted); position: relative; }
+        .agent-dot.active { background: var(--accent-color); box-shadow: 0 0 0 4px var(--accent-glow); }
+        .agent-dot.done { background: var(--success); }
+        .live-terminal { background: #0f172a; color: #38bdf8; font-family: monospace; padding: 1.25rem; border-radius: var(--radius-md); height: 350px; overflow-y: auto; white-space: pre-wrap; font-size: 0.9rem; }
+        .persona-badge-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+        .p-badge { background: #f1f5f9; border: 1px solid var(--border-color); padding: 0.5rem 1rem; border-radius: var(--radius-sm); display: flex; flex-direction: column; }
+        .p-badge span:first-child { font-weight: bold; font-size: 0.9rem; }
+        .p-badge span:last-child { font-size: 0.75rem; color: var(--text-secondary); }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo-container">✨ AI UX Auditor</div>
+        <div class="nav-links">
+            <a href="index.html">Initialization</a>
+            <a href="dashboard.html" class="active">Live Workspace</a>
+            <a href="findings.html">UX Intelligence</a>
+            <a href="fixes.html">AI Code Fixes</a>
+            <a href="retest.html">Auto Re-Test</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="dashboard-grid">
+            <div>
+                <div class="card">
+                    <h2>Orchestrator Control Tower</h2>
+                    <p id="targetUrlDisplay" style="color: var(--accent-color); font-weight: 600;"></p>
+                    
+                    <div class="agent-container" id="agentContainer">
+                        </div>
+                </div>
+
+                <div class="card">
+                    <h3>Active Stream Logs</h3>
+                    <div class="live-terminal" id="terminalLogs">Initializing log stream buffer...</div>
+                </div>
+            </div>
+
+            <div>
+                <div class="card">
+                    <h3>Synthetic Personas</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">Generated test profiles assessing target environment:</p>
+                    <div class="persona-badge-grid" id="personaContainer"></div>
+                </div>
+                
+                <div class="card" style="text-align: center; background: var(--accent-glow); border-color: var(--accent-color);">
+                    <h3>Audit Processing</h3>
+                    <p style="margin-bottom: 1.5rem;">Orchestrator executing multi-agent pipelines.</p>
+                    <a id="proceedBtn" href="findings.html" class="btn btn-primary" style="display: none; width: 100%;">View Intelligence Layout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const taskId = params.get('task_id');
+        
+        document.getElementById('targetUrlDisplay').innerText = `Target: ${localStorage.getItem('currentAuditUrl') || 'Web Environment'}`;
+
+        const phases = [
+            { id: 'orchestrator', name: 'Orchestrator Core Routing' },
+            { id: 'personas', name: 'Persona Simulation Layer' },
+            { id: 'navigation', name: 'Browser Navigation & Click Engine' },
+            { id: 'intelligence', name: 'UX Intelligence Core Analysis' }
+        ];
+
+        const container = document.getElementById('agentContainer');
+        phases.forEach(p => {
+            container.innerHTML += `
+                <div class="agent-row" id="row-${p.id}">
+                    <div class="agent-info">
+                        <div class="agent-dot" id="dot-${p.id}"></div>
+                        <div><strong>${p.name}</strong></div>
+                    </div>
+                    <span id="status-${p.id}" style="font-size:0.85rem; color:var(--text-secondary)">Queued</span>
+                </div>`;
+        });
+
+        const terminal = document.getElementById('terminalLogs');
+        const personaContainer = document.getElementById('personaContainer');
+
+        function appendLog(text) {
+            terminal.innerText += `\n[${new Date().toLocaleTimeString()}] ${text}`;
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        async function pollStatus() {
+            try {
+                const res = await fetch(`http://127.0.0.1:8000/api/audit/status/${taskId}`);
+                const data = await res.json();
+
+                // Live dynamic status controller
+                if (data.phase === "initializing") {
+                    document.getElementById('dot-orchestrator').className = "agent-dot active";
+                    document.getElementById('status-orchestrator').innerText = "Analyzing requirements...";
+                    appendLog("Orchestrator evaluating selected navigation goals.");
+                } 
+                else if (data.phase === "generating_personas") {
+                    document.getElementById('dot-orchestrator').className = "agent-dot done";
+                    document.getElementById('status-orchestrator').innerText = "Complete";
+                    document.getElementById('dot-personas').className = "agent-dot active";
+                    document.getElementById('status-personas').innerText = "Synthesizing users...";
+                    appendLog("Persona Manager instantiating 4 user variance structures.");
+                } 
+                else if (data.phase === "navigating") {
+                    document.getElementById('dot-personas').className = "agent-dot done";
+                    document.getElementById('status-personas').innerText = "Complete";
+                    document.getElementById('dot-navigation').className = "agent-dot active";
+                    document.getElementById('status-navigation').innerText = "Simulating paths...";
+                    appendLog("Browser simulation handling target viewports and accessibility DOM queries.");
+                    
+                    if(personaContainer.children.length === 0 && data.data && data.data.personas) {
+                        data.data.personas.forEach(p => {
+                            personaContainer.innerHTML += `
+                                <div class="p-badge">
+                                    <span>${p.name}</span>
+                                    <span>${p.focus}</span>
+                                </div>`;
+                        });
+                    }
+                } 
+                else if (data.phase === "analyzing") {
+                    document.getElementById('dot-navigation').className = "agent-dot done";
+                    document.getElementById('status-navigation').innerText = "Complete";
+                    document.getElementById('dot-intelligence').className = "agent-dot active";
+                    document.getElementById('status-intelligence').innerText = "Running heuristic engines...";
+                    appendLog("Heuristics, WCAG parsing, and friction matrices running asynchronously.");
+                } 
+                else if (data.phase === "completed") {
+                    document.getElementById('dot-intelligence').className = "agent-dot done";
+                    document.getElementById('status-intelligence').innerText = "Inspection Finished";
+                    appendLog("All agent routines successfully executed. Local intelligence reports finalized.");
+                    document.getElementById('proceedBtn').style.display = "block";
+                    clearInterval(intervalId);
+                }
+            } catch(e) {
+                console.error("Polling structural disconnect: ", e);
+            }
+        }
+
+        const intervalId = setInterval(pollStatus, 1500);
+    </script>
+</body>
+</html>

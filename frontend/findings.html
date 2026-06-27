@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI UX Auditor - Intelligence Findings</title>
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/findings.css">
+    <style>
+        .score-metrics-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
+        .score-box { text-align: center; padding: 1.5rem; border-radius: var(--radius-md); background: var(--bg-secondary); border: 1px solid var(--border-color); }
+        .score-num { font-size: 2.25rem; font-weight: 800; margin-top: 0.25rem; }
+        .issue-card { border-left: 5px solid var(--border-color); transition: var(--transition); padding: 1.5rem; margin-bottom: 1rem; background: var(--bg-secondary); border-radius: 0 var(--radius-md) var(--radius-md) 0; border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); }
+        .issue-card:hover { transform: translateX(4px); box-shadow: var(--shadow-md); }
+        .issue-card.critical { border-left-color: var(--danger); }
+        .issue-card.high { border-left-color: var(--warning); }
+        .issue-card.medium { border-left-color: var(--info); }
+        .issue-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; }
+        .analysis-block { background: var(--bg-primary); padding: 1rem; border-radius: var(--radius-sm); margin-top: 1rem; font-size: 0.9rem; border: 1px dashed var(--border-color); }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo-container">✨ AI UX Auditor</div>
+        <div class="nav-links">
+            <a href="index.html">Initialization</a>
+            <a href="dashboard.html">Live Workspace</a>
+            <a href="findings.html" class="active">UX Intelligence</a>
+            <a href="fixes.html">AI Code Fixes</a>
+            <a href="retest.html">Auto Re-Test</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2 style="margin-bottom: 1.5rem;">UX Intelligence Analytical Layer</h2>
+        
+        <div class="score-metrics-row">
+            <div class="score-box">
+                <div style="color:var(--text-secondary); font-weight:600;">Navigation Clarity Score</div>
+                <div class="score-num" style="color: var(--accent-color);" id="navClarity">--</div>
+            </div>
+            <div class="score-box">
+                <div style="color:var(--text-secondary); font-weight:600;">WCAG Compliance Failures</div>
+                <div class="score-num" style="color: var(--danger);" id="a11yFailures">--</div>
+            </div>
+            <div class="score-box">
+                <div style="color:var(--text-secondary); font-weight:600;">Detected Friction Events</div>
+                <div class="score-num" style="color: var(--warning);" id="frictionEvents">--</div>
+            </div>
+        </div>
+
+        <h3>Identified Usability & Technical Hurdles</h3>
+        <div id="issuesWrapper" style="margin-top: 1.25rem;"></div>
+    </div>
+
+    <script>
+        async function fetchFindings() {
+            const res = await fetch('http://127.0.0.1:8000/api/audit/latest');
+            const auditData = await res.json();
+            
+            if(!auditData || !auditData.issues) return;
+
+            // Compute summary metrics
+            document.getElementById('navClarity').innerText = `${auditData.heuristic_score}/10`;
+            document.getElementById('a11yFailures').innerText = auditData.issues.filter(i => i.type === 'WCAG').length;
+            document.getElementById('frictionEvents').innerText = auditData.issues.filter(i => i.type === 'Friction').length;
+
+            const wrapper = document.getElementById('issuesWrapper');
+            wrapper.innerHTML = '';
+            
+            auditData.issues.forEach(issue => {
+                const severityClass = issue.severity.toLowerCase();
+                wrapper.innerHTML += `
+                    <div class="issue-card ${severityClass}">
+                        <div class="issue-header">
+                            <div>
+                                <span class="badge badge-${severityClass}">${issue.severity}</span>
+                                <strong style="font-size:1.15rem; margin-left:0.5rem; color:var(--text-primary);">${issue.title}</strong>
+                            </div>
+                            <span style="font-size:0.85rem; color:var(--text-muted); font-weight:bold;">${issue.type} AGENT</span>
+                        </div>
+                        <p style="color: var(--text-secondary); font-size:0.95rem; margin-top:0.5rem;">${issue.description}</p>
+                        
+                        <div class="analysis-block">
+                            <strong>🕵️ Root Cause Analysis:</strong> ${issue.root_cause}
+                        </div>
+                    </div>`;
+            });
+        }
+        fetchFindings();
+    </script>
+    <script src="js/api.js"></script>
+    <script src="js/findings.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

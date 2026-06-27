@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI UX Auditor - Auto Re-Test Validation</title>
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .split-panels { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem; }
+        .metric-card { text-align: center; padding: 2.5rem; border-radius: var(--radius-lg); border: 2px dashed var(--border-color); background: var(--bg-secondary); transition: var(--transition); }
+        .metric-card.active { border-color: var(--accent-color); background: var(--accent-glow); }
+        .giant-percentage { font-size: 5rem; font-weight: 900; line-height: 1; margin: 1rem 0; }
+        .status-pill { display: inline-block; padding: 0.5rem 1.25rem; font-weight: bold; border-radius: 50px; background: #fee2e2; color: var(--danger); margin-top: 0.5rem; }
+        .status-pill.success { background: #d1fae5; color: var(--success); }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo-container">✨ AI UX Auditor</div>
+        <div class="nav-links">
+            <a href="index.html">Initialization</a>
+            <a href="dashboard.html">Live Workspace</a>
+            <a href="findings.html">UX Intelligence</a>
+            <a href="fixes.html">AI Code Fixes</a>
+            <a href="retest.html" class="active">Auto Re-Test</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2>Continuous Validation Optimization Pipeline</h2>
+        <p style="color: var(--text-secondary);">The verification loop executes simulated paths post-fix injection to contrast conversion changes.</p>
+
+        <div class="split-panels">
+            <div class="metric-card" id="beforeCard">
+                <h3>Pre-Audit Baseline Flow</h3>
+                <p style="color: var(--text-muted);">Initial System Execution Profile</p>
+                <div class="giant-percentage" style="color: var(--danger);" id="oldSuccess">--</div>
+                <div class="status-pill">Friction Failures Detected</div>
+            </div>
+
+            <div class="metric-card" id="afterCard">
+                <h3>Post-AI Fix Validation Run</h3>
+                <p style="color: var(--text-muted);">Post-Patch Execution Profile</p>
+                <div class="giant-percentage" style="color: var(--success);" id="newSuccess">--</div>
+                <div class="status-pill success">Validation Stable</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function fetchValidationMetrics() {
+            const res = await fetch('http://127.0.0.1:8000/api/audit/latest');
+            const data = await res.json();
+            
+            if(!data || !data.retest_metrics) return;
+
+            document.getElementById('oldSuccess').innerText = data.retest_metrics.old_success;
+            document.getElementById('newSuccess').innerText = data.retest_metrics.new_success;
+            
+            setTimeout(() => {
+                document.getElementById('afterCard').classList.add('active');
+            }, 400);
+        }
+        fetchValidationMetrics();
+    </script>
+    <script src="js/api.js"></script>
+    <script src="js/retest.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
